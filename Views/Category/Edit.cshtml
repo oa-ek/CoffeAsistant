@@ -1,0 +1,13 @@
+﻿@model CafeAssistiant.Models.Category
+
+<h2>Редагування категорії</h2>
+
+<form method="post">
+    <input type="hidden" name="ID" value="@Model.Id" />
+    <div class="form-group">
+        <label>Назва категорії</label>
+        <input type="text" name="CategoryName" value="@Model.CategoryName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Зберегти</button>
+</form>
+<a href="/Category" class="btn btn-secondary">Повернутися назад</a>

@@ -1,0 +1,39 @@
+﻿@model CafeAssistiant.Models.Order
+
+@{
+    ViewData["Title"] = "Додати замовлення";
+}
+
+<h2>Додати замовлення</h2>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label>Номер замовлення</label>
+        <input asp-for="Number" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>Продукт</label>
+        <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-control" required>
+            <option value="">Оберіть продукт</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Працівник</label>
+        <select asp-for="EmployeeId" asp-items="ViewBag.Employers" class="form-control" required>
+            <option value="">Оберіть працівника</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Дата замовлення</label>
+        <input asp-for="DateOrder" type="date" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Зберегти</button>
+    <a href="/Order/Index" class="btn btn-secondary mt-3">Назад</a>
+</form>

@@ -1,0 +1,15 @@
+﻿@model CafeAssistiant.Models.Category
+
+<h2>Додати категорію</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="CategoryName"></label>
+        <input asp-for="CategoryName" class="form-control" />
+        <span asp-validation-for="CategoryName" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Зберегти</button>
+</form>
+
+<a href="/Category" class="btn btn-secondary">Повернутися назад</a>

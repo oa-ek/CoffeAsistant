@@ -1,0 +1,39 @@
+﻿@model IEnumerable<CafeAssistiant.Models.Delivery>
+
+@{
+    ViewData["Title"] = "Delivery List";
+}
+
+<h2>Delivery List</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">Add Delivery</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Employee</th>
+            <th>Ordered</th>
+            <th>Arrive</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var delivery in Model)
+        {
+            <tr>
+                <td>@delivery.Address</td>
+                <td>@delivery.Order?.Number</td> <!-- Виведення номера замовлення -->
+                <td>@delivery.Customer?.CustomerName</td> <!-- Виведення імені клієнта -->
+                <td>@delivery.Employee?.EmployeeName</td> <!-- Виведення імені працівника -->
+                <td>@delivery.Ordered</td>
+                <td>@delivery.Arrive</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@delivery.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@delivery.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

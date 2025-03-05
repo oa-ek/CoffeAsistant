@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CafeAssistiant.Models.Order>
+
+@{
+    ViewData["Title"] = "Замовлення";
+}
+
+<h2>Замовлення</h2>
+<a href="/Order/Create" class="btn btn-primary mb-3">Додати замовлення</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Продукт</th>
+            <th>Працівник</th>
+            <th>Дата</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Number</td>
+                <td>@order.Product.Name</td>
+                <td>@order.Employee.EmployeeName</td>
+                <td>@order.DateOrder.ToShortDateString()</td>
+                <td>
+                    <a href="/Order/Edit/@order.Id" class="btn btn-warning">Редагувати</a>
+                    <a href="/Order/Delete/@order.Id" class="btn btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

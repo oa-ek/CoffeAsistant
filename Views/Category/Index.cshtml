@@ -1,0 +1,26 @@
+﻿@model IEnumerable<CafeAssistiant.Models.Category>
+
+<h2>Список категорій</h2>
+<a href="/Category/Create" class="btn btn-primary">Додати категорію</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва категорії</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <a href="/Category/Edit/@item.Id" class="btn btn-warning">Редагувати</a>
+                    <a href="/Category/Delete/@item.Id" class="btn btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

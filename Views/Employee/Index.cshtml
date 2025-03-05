@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CafeAssistiant.Models.Employee>
+
+<h2>Список працівників</h2>
+<a asp-action="Create" class="btn btn-primary">Додати працівника</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ім'я</th>
+            <th>Посада</th>
+            <th>Телефон</th>
+            <th>Місто</th>
+            <th>Зарплата</th>
+            <th>Дата співпраці</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.EmployeeName</td>
+                <td>@employee.Position</td>
+                <td>@employee.Phone</td>
+                <td>@employee.City</td>
+                <td>@employee.Salary</td>
+                <td>@employee.EmployeeCooperation.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-warning">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-danger" onclick="return confirm('Ви впевнені?')">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
