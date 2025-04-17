@@ -11,5 +11,7 @@
 
         public int EmployeeId { get; set; }
         public Employee? Employee { get; set; }
+        public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
     }
 }

@@ -24,14 +24,16 @@
         {
             <tr>
                 <td>@delivery.Address</td>
-                <td>@delivery.Order?.Number</td> <!-- Виведення номера замовлення -->
-                <td>@delivery.Customer?.CustomerName</td> <!-- Виведення імені клієнта -->
-                <td>@delivery.Employee?.EmployeeName</td> <!-- Виведення імені працівника -->
-                <td>@delivery.Ordered</td>
-                <td>@delivery.Arrive</td>
+                <td>@delivery.Order?.Number</td>
+                <td>@delivery.ApplicationUser?.FullName</td>
+                <td>@delivery.Employee?.EmployeeName</td>
+                <td>@delivery.Ordered.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@delivery.Arrive.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@delivery.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@delivery.Id" class="btn btn-danger">Delete</a>
+                    <form asp-action="Delete" asp-route-id="@delivery.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

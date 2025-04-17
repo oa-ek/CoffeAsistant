@@ -1,5 +1,6 @@
 ﻿using CafeAssistiant.Data;
 using CafeAssistiant.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace CafeAssistiant.Controllers
 {
+    [Authorize(Roles = "Admin")] // Приклад для адміна 
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,10 +26,7 @@ namespace CafeAssistiant.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         public async Task<IActionResult> Create(Category category)
@@ -38,7 +37,7 @@ namespace CafeAssistiant.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View();
+            return View(category);
         }
 
         [HttpGet]
@@ -62,7 +61,7 @@ namespace CafeAssistiant.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     ModelState.AddModelError("", "Помилка при оновленні категорії.");
                 }
@@ -87,7 +86,7 @@ namespace CafeAssistiant.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Помилка при видаленні категорії.");
                 return View("Index", await _context.Categories.ToListAsync());

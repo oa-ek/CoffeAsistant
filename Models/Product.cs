@@ -10,6 +10,8 @@
 
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
 
     }
 }
