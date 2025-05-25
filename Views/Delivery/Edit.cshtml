@@ -4,37 +4,47 @@
     ViewData["Title"] = "Edit Delivery";
 }
 
+
+
 <h2>Edit Delivery</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
-        <label>Address</label>
-        <input asp-for="Address" class="form-control" required />
+        <label asp-for="Address">Delivery Address</label>
+        <input id="address-input" asp-for="Address" class="form-control" placeholder="Search for address..." />
+        <span asp-validation-for="Address" class="text-danger"></span>
     </div>
-        <div class="form-group">
+
+    <div id="map" style="height: 400px; width: 100%; margin: 15px 0;"></div>
+
+    <div class="form-group">
         <label>Order</label>
         <select asp-for="OrderId" asp-items="ViewBag.Orders" class="form-control" required>
             <option value="">Замовлення</option>
         </select>
     </div>
+
     <div class="form-group">
         <label>Customer</label>
-        <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-control" required>
+        <select asp-for="ApplicationUserId" asp-items="ViewBag.Customers" class="form-control" required>
             <option value="">Замовник</option>
         </select>
     </div>
+
     <div class="form-group">
         <label>Employee</label>
         <select asp-for="EmployeeId" asp-items="ViewBag.Employees" class="form-control" required>
             <option value="">Працівник</option>
         </select>
     </div>
+
     <div class="form-group">
         <label>Ordered Date</label>
         <input asp-for="Ordered" type="datetime-local" class="form-control" required />
     </div>
+
     <div class="form-group">
         <label>Arrive Date</label>
         <input asp-for="Arrive" type="datetime-local" class="form-control" required />
@@ -44,3 +54,91 @@
 </form>
 
 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+
+@section Scripts {
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            const addressInput = document.getElementById("address-input");
+            const defaultLocation = { lat: 50.4501, lng: 30.5234 };
+
+            // Ініціалізація карти
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultLocation,
+                zoom: 12
+            });
+
+            // Створення маркера
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                draggable: true
+            });
+
+            // Якщо адреса вже існує в полі, спробувати геокодувати її для встановлення центру карти
+            if (addressInput.value) {
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address: addressInput.value }, function (results, status) {
+                    if (status === "OK" && results[0]) {
+                        map.setCenter(results[0].geometry.location);
+                        marker.setPosition(results[0].geometry.location);
+                    }
+                });
+            }
+
+            // Обробник події для перетягування маркера
+            marker.addListener('dragend', function () {
+                const position = marker.getPosition();
+                getAddress(position.lat(), position.lng());
+            });
+
+            // Додаємо обробник події для клацання по карті
+            map.addListener('click', function(e) {
+                // Оновлюємо позицію маркера до місця кліку
+                marker.setPosition(e.latLng);
+                getAddress(e.latLng.lat(), e.latLng.lng());
+            });
+
+            //  Ініціалізація автозаповнення для пошуку адреси
+            const autocomplete = new google.maps.places.Autocomplete(addressInput);
+            autocomplete.bindTo("bounds", map);
+
+            autocomplete.addListener("place_changed", function () {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) return;
+
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(15);
+                }
+
+                marker.setPosition(place.geometry.location);
+            });
+        }
+
+        // Функція для геокодування координат у текстову адресу
+        function getAddress(lat, lng) {
+            const geocoder = new google.maps.Geocoder();
+            const latlng = { lat: lat, lng: lng };
+            geocoder.geocode({ location: latlng }, function (results, status) {
+                if (status === "OK" && results[0]) {
+                    document.getElementById("address-input").value = results[0].formatted_address;
+                }
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpUcfnlqKVs-aaZ2AASasG6v7psq5GxjU&libraries=places&callback=initMap">
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

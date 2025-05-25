@@ -1,10 +1,12 @@
 ﻿using CafeAssistiant.Data;
 using CafeAssistiant.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Linq;
 
 namespace CafeAssistiant.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,10 +23,7 @@ namespace CafeAssistiant.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         public IActionResult Create(Employee employee)

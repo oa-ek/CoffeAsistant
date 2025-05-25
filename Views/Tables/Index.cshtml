@@ -1,0 +1,115 @@
+﻿@model List<CafeAssistiant.Models.Table>
+
+@{
+    ViewData["Title"] = "Схема кафе";
+}
+
+<h2 class="mb-4 text-center">Схема кафе</h2>
+
+<style>
+    .table-wrapper {
+        background-color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .table-layout {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .table-box {
+        height: 140px;
+        width: 80px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .reserved {
+        background-color: #dc3545;
+    }
+
+    .free {
+        background-color: #28a745;
+    }
+
+    .table-box form {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .table-box button {
+        font-size: 0.75rem;
+        padding: 2px 6px;
+        margin-top: 5px;
+    }
+
+    .time-inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        margin-top: 5px;
+    }
+
+        .time-inputs input {
+            width: 65px;
+            font-size: 0.7rem;
+            padding: 2px;
+        }
+</style>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-wrapper">
+        <div class="table-layout">
+            @foreach (var table in Model)
+            {
+                <div class="table-box @(table.IsReserved ? "reserved" : "free")">
+                    <div>Столик @table.Number</div>
+
+                    @if (table.IsReserved)
+                    {
+                        <div class="small">
+                            @table.ReservedFrom?.ToString("HH:mm") - @table.ReservedUntil?.ToString("HH:mm")
+                        </div>
+                        <div class="small">до @table.ReservedUntil?.ToString("HH:mm")</div>
+                        <form method="post" asp-action="Cancel">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="tableId" value="@table.Id" />
+                            <button class="btn btn-light btn-sm" type="submit">Скасувати</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="Reserve">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="tableId" value="@table.Id" />
+                            <div class="time-inputs">
+                                <input type="time" name="fromTime" required />
+                                <input type="time" name="toTime" required />
+                            </div>
+                            <button class="btn btn-light btn-sm" type="submit">Забронювати</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center mt-4">Столики не знайдено.</div>
+}

@@ -4,6 +4,96 @@
     ViewData["Title"] = "Delivery List";
 }
 
+<style>
+    h2 {
+        color: #d9b08c;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 2px #3e2f2f;
+    }
+
+    .btn-primary {
+        background-color: #8d6e63;
+        border: none;
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        transition: 0.2s ease-in-out;
+    }
+
+        .btn-primary:hover {
+            background-color: #6d4c41;
+            transform: scale(1.05);
+        }
+
+    .table {
+        background-color: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(8px);
+        color: #fff3e0;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        border-collapse: collapse;
+    }
+
+        .table thead {
+            background-color: rgba(90, 60, 50, 0.6);
+            color: #ffe0b2;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .table th, .table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: 0.3s ease;
+        }
+
+    .btn-warning {
+        background-color: #ffcc80;
+        border: none;
+        color: #4e342e;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+    }
+
+        .btn-warning:hover {
+            background-color: #ffb74d;
+            transform: scale(1.05);
+        }
+
+    .btn-danger {
+        background-color: #e57373;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+    }
+
+        .btn-danger:hover {
+            background-color: #ef5350;
+            transform: scale(1.05);
+        }
+</style>
+
+
+
 <h2>Delivery List</h2>
 <a asp-action="Create" class="btn btn-primary mb-3">Add Delivery</a>
 
@@ -24,14 +114,16 @@
         {
             <tr>
                 <td>@delivery.Address</td>
-                <td>@delivery.Order?.Number</td> <!-- Виведення номера замовлення -->
-                <td>@delivery.Customer?.CustomerName</td> <!-- Виведення імені клієнта -->
-                <td>@delivery.Employee?.EmployeeName</td> <!-- Виведення імені працівника -->
-                <td>@delivery.Ordered</td>
-                <td>@delivery.Arrive</td>
+                <td>@delivery.Order?.Number</td>
+                <td>@delivery.ApplicationUser?.FullName</td>
+                <td>@delivery.Employee?.EmployeeName</td>
+                <td>@delivery.Ordered.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@delivery.Arrive.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@delivery.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@delivery.Id" class="btn btn-danger">Delete</a>
+                    <form asp-action="Delete" asp-route-id="@delivery.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

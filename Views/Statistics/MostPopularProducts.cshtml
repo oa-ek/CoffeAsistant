@@ -1,0 +1,78 @@
+﻿@model List< CafeAssistiant.Models.ViewModels.PopularProductViewModel>
+
+@{
+    ViewData["Title"] = "Статистика продажів";
+    var period = ViewBag.SelectedPeriod as string ?? "today";
+}
+
+<h2>Статистика продажів</h2>
+<form method="post" asp-action="ExportCsv" asp-controller="Statistics" class="mb-3">
+    <input type="hidden" name="period" value="@period" />
+    <button type="submit" class="btn btn-primary">Експорт CSV</button>
+</form>
+<form method="get" class="mb-3">
+    <select name="period" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
+        <option value="today" selected="@(period == "today")">Сьогодні</option>
+        <option value="yesterday" selected="@(period == "yesterday")">Вчора</option>
+        <option value="last7days" selected="@(period == "last7days")">Останні 7 днів</option>
+        <option value="all" selected="@(period == "all")">Всі дні</option>
+    </select>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Продукт</th>
+            <th>Кількість замовлень</th>
+            <th>Загальний дохід</th>
+            <th>Останнє замовлення</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductName</td>
+                <td>@product.OrderCount</td>
+                <td>@product.TotalRevenue.ToString("C", new System.Globalization.CultureInfo("uk-UA"))</td>
+                <td>@product.LastOrderDate?.ToString("dd.MM.yyyy HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4 class="mt-3 text-white bg-dark p-2 rounded">Загальний дохід: <strong>@ViewBag.TotalRevenue</strong></h4>
+
+<div class="my-5">
+    <canvas id="productsChart" width="400" height="200"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('productsChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => p.ProductName))),
+                datasets: [{
+                    label: 'Кількість замовлень',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => p.OrderCount))),
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#66FF66', '#FF6666', '#6699FF', '#CCCC00'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                }
+            }
+        });
+    </script>
+}

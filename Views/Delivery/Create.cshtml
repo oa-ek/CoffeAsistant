@@ -4,41 +4,119 @@
     ViewData["Title"] = "Create Delivery";
 }
 
+
+
 <h2>Create Delivery</h2>
 
 <form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="form-group">
-        <label>Order:</label>
+        <label asp-for="OrderId">Order</label>
         <select asp-for="OrderId" asp-items="ViewBag.Orders" class="form-control"></select>
+        <span asp-validation-for="OrderId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label>Customer:</label>
-        <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="form-control"></select>
+        <label asp-for="ApplicationUserId">Customer</label>
+        <select asp-for="ApplicationUserId" asp-items="ViewBag.Customers" class="form-control"></select>
+        <span asp-validation-for="ApplicationUserId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label>Employee:</label>
+        <label asp-for="EmployeeId">Employee</label>
         <select asp-for="EmployeeId" asp-items="ViewBag.Employees" class="form-control"></select>
+        <span asp-validation-for="EmployeeId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label>Address:</label>
-        <input asp-for="Address" class="form-control" />
+        <label asp-for="Address">Delivery Address</label>
+        <input id="address-input" asp-for="Address" class="form-control" placeholder="Search for address..." />
+        <span asp-validation-for="Address" class="text-danger"></span>
     </div>
+
+    <div id="map" style="height: 400px; width: 100%; margin: 15px 0;"></div>
 
     <div class="form-group">
-        <label>Arrive Date:</label>
-        <input asp-for="Arrive" type="datetime-local" class="form-control" />
+        <label asp-for="Arrive">Arrive Date</label>
+        <input asp-for="Arrive" class="form-control" type="datetime-local" />
+        <span asp-validation-for="Arrive" class="text-danger"></span>
     </div>
-
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="alert alert-danger">
-            @Html.ValidationSummary()
-        </div>
-    }
 
     <button type="submit" class="btn btn-primary">Зберегти</button>
     <a asp-action="Index" class="btn btn-secondary">Назад</a>
 </form>
+
+
+
+@section Scripts {
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            const defaultLocation = { lat: 50.4501, lng: 30.5234 }; // Київ
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultLocation,
+                zoom: 12
+            });
+
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                draggable: true
+            });
+
+            // Перетягування маркера
+            marker.addListener('dragend', function () {
+                const position = marker.getPosition();
+                getAddress(position.lat(), position.lng());
+            });
+
+            // Клік по карті для встановлення маркера
+            map.addListener('click', function (e) {
+                marker.setPosition(e.latLng);
+                getAddress(e.latLng.lat(), e.latLng.lng());
+            });
+
+            // Автозаповнення адреси
+            const input = document.getElementById("address-input");
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo("bounds", map);
+
+            autocomplete.addListener("place_changed", function () {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) return;
+
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(15);
+                }
+
+                marker.setPosition(place.geometry.location);
+            });
+        }
+
+        function getAddress(lat, lng) {
+            const geocoder = new google.maps.Geocoder();
+            const latlng = { lat: lat, lng: lng };
+            geocoder.geocode({ location: latlng }, function (results, status) {
+                if (status === "OK" && results[0]) {
+                    document.getElementById("address-input").value = results[0].formatted_address;
+                }
+            });
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpUcfnlqKVs-aaZ2AASasG6v7psq5GxjU&libraries=places&callback=initMap">
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

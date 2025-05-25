@@ -1,26 +1,62 @@
 ﻿@model IEnumerable<CafeAssistiant.Models.Category>
 
-<h2>Список категорій</h2>
-<a href="/Category/Create" class="btn btn-primary">Додати категорію</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Назва категорії</th>
-            <th>Дії</th>
-        </tr>
-    </thead>
-    <tbody>
+<style>
+    .category-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        overflow: hidden;
+        transition: transform 0.2s ease-in-out;
+        background-color: #fff;
+    }
+
+        .category-card:hover {
+            transform: scale(1.02);
+        }
+
+        .category-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .category-card .card-body {
+            padding: 1rem;
+        }
+
+    .category-background {
+        background-image: url('/images/coffee-background.jpg'); /* Заміни шлях на свій */
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+    .btn-warning, .btn-danger {
+        margin: 0 5px 5px 5px;
+    }
+
+    h2, .btn-primary {
+        color: white;
+    }
+</style>
+
+<div class="category-background">
+    <h2 class="mb-4">Список категорій</h2>
+    <a href="/Category/Create" class="btn btn-primary mb-4">Додати категорію</a>
+
+    <div class="row">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>@item.Id</td>
-                <td>@item.CategoryName</td>
-                <td>
-                    <a href="/Category/Edit/@item.Id" class="btn btn-warning">Редагувати</a>
-                    <a href="/Category/Delete/@item.Id" class="btn btn-danger">Видалити</a>
-                </td>
-            </tr>
+            <div class="col-md-4 mb-4">
+                <div class="card category-card text-center">
+                    <img src="@(!string.IsNullOrEmpty(item.ImagePath) ? item.ImagePath : "https://via.placeholder.com/400x200?text=No+Image")" class="card-img-top" alt="@item.CategoryName" />
+                    <div class="card-body">
+                        <h5 class="card-title">@item.CategoryName</h5>
+                        <a href="/Category/Edit/@item.Id" class="btn btn-warning">Редагувати</a>
+                        <a href="/Category/Delete/@item.Id" class="btn btn-danger">Видалити</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
